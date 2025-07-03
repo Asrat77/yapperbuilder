@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ComparisonStat, type: :model do
   attributes = [
-    { creator: [:belong_to] },
+    { creator: [ :belong_to ] },
     { commits_count: %i[presence numericality] },
     { posts_count: %i[presence numericality] },
     { commit_to_post_ratio: %i[presence numericality] },

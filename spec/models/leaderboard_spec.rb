@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Leaderboard, type: :model do
   attributes = [
-    { creator: [:belong_to] },
+    { creator: [ :belong_to ] },
     { timeframe: %i[presence] },
     { rank: %i[presence numericality] },
     { score: %i[presence numericality] }
