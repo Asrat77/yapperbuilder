@@ -31,4 +31,4 @@ COPY . .
 EXPOSE 8080
 
 # Start the Rails app — use $PORT from Cloud Run
-CMD ["sh", "-c", "bundle exec rake db:migrate && bundle exec rails server -b 0.0.0.0 -p 8080"]
+CMD ["sh", "-c", "bundle exec rake db:migrate && bundle exec rails server -b 0.0.0.0 -p ${PORT:-8080}"]
