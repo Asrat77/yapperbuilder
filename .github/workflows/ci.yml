@@ -75,8 +75,8 @@ jobs:
 
       - name: Setup database
         run: |
-          bin/rails db:create
-          bin/rails db:schema:load
+          PGUSER=postgres bin/rails db:create
+          PGUSER=postgres bin/rails db:schema:load
 
       - name: Run RSpec tests
         run: bin/rspec
