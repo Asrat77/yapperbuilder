@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_03_122008) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_03_133100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -25,4 +25,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_03_122008) do
     t.index ["github_username"], name: "index_creators_on_github_username", unique: true
     t.index ["telegram_channel"], name: "index_creators_on_telegram_channel", unique: true
   end
+
+  create_table "github_activities", force: :cascade do |t|
+    t.bigint "creator_id", null: false
+    t.string "repo"
+    t.integer "commits_count"
+    t.string "timeframe"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_github_activities_on_creator_id"
+  end
+
+  add_foreign_key "github_activities", "creators"
 end
