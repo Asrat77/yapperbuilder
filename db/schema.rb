@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_03_133100) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_03_141503) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -36,5 +36,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_03_133100) do
     t.index ["creator_id"], name: "index_github_activities_on_creator_id"
   end
 
+  create_table "leaderboards", force: :cascade do |t|
+    t.bigint "creator_id", null: false
+    t.string "timeframe"
+    t.integer "rank"
+    t.float "score"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_leaderboards_on_creator_id"
+  end
+
+  create_table "telegram_posts", force: :cascade do |t|
+    t.bigint "creator_id", null: false
+    t.integer "message_id"
+    t.text "text"
+    t.datetime "posted_at"
+    t.string "timeframe"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_telegram_posts_on_creator_id"
+  end
+
   add_foreign_key "github_activities", "creators"
+  add_foreign_key "leaderboards", "creators"
+  add_foreign_key "telegram_posts", "creators"
 end
