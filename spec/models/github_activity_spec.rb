@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe GithubActivity, type: :model do
   attributes = [
-    { creator: [:belong_to] },
+    { creator: [ :belong_to ] },
     { repo: %i[presence] },
     { commits_count: %i[presence numericality] },
     { timeframe: %i[presence] }
