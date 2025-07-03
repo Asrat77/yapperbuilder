@@ -1,31 +1,34 @@
 # syntax=docker/dockerfile:1
-# check=error=true
-
-# This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
-# docker build -t yapperbuilder .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name yapperbuilder yapperbuilder
-
-# For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
-
-# Make sure RUBY_VERSION matches the Ruby version in .ruby-version
+# Use a slim base Ruby image
 ARG RUBY_VERSION=3.4.1
-FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
+FROM ruby:$RUBY_VERSION-slim
 
-
+# Set working directory
 WORKDIR /rails
 
+# Install system dependencies
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
     build-essential \
     libpq-dev \
     postgresql-client \
-    libyaml-dev && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+    libyaml-dev \
+    nodejs \
+    yarn && \
+    rm -rf /var/lib/apt/lists/*
 
+# Install gems
 COPY Gemfile Gemfile.lock ./
-RUN bundle install
+RUN bundle install --without development test
 
+# Copy app code
 COPY . .
 
+# Precompile assets (optional, for production)
+# RUN bundle exec rake assets:precompile
+
+# Expose Cloud Run default port
 EXPOSE 8080
-CMD ["sh", "-c", "bundle exec rake db:create db:migrate && ./bin/rails server -b 0.0.0.0 -p 8080"]
+
+# Start the Rails app — use $PORT from Cloud Run
+CMD ["sh", "-c", "bundle exec rake db:migrate && bundle exec rails server -b 0.0.0.0 -p $PORT"]
