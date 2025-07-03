@@ -10,9 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_03_140057) do
+
+ActiveRecord::Schema[8.0].define(version: 2025_07_03_141846) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "comparison_stats", force: :cascade do |t|
+    t.bigint "creator_id", null: false
+    t.integer "commits_count"
+    t.integer "posts_count"
+    t.float "commit_to_post_ratio"
+    t.string "timeframe"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index [ "creator_id" ], name: "index_comparison_stats_on_creator_id"
+  end
 
   create_table "creators", force: :cascade do |t|
     t.string "github_username", null: false
@@ -22,8 +34,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_03_140057) do
     t.string "bio"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["github_username"], name: "index_creators_on_github_username", unique: true
-    t.index ["telegram_channel"], name: "index_creators_on_telegram_channel", unique: true
+    t.index [ "github_username" ], name: "index_creators_on_github_username", unique: true
+    t.index [ "telegram_channel" ], name: "index_creators_on_telegram_channel", unique: true
   end
 
   create_table "github_activities", force: :cascade do |t|
@@ -33,8 +45,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_03_140057) do
     t.string "timeframe"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["creator_id"], name: "index_github_activities_on_creator_id"
+    t.index [ "creator_id" ], name: "index_github_activities_on_creator_id"
   end
+
+
+  create_table "leaderboards", force: :cascade do |t|
+    t.bigint "creator_id", null: false
+    t.string "timeframe"
+    t.integer "rank"
+    t.float "score"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index [ "creator_id" ], name: "index_leaderboards_on_creator_id"
+  end
+
 
   create_table "telegram_posts", force: :cascade do |t|
     t.bigint "creator_id", null: false
@@ -44,9 +68,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_03_140057) do
     t.string "timeframe"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["creator_id"], name: "index_telegram_posts_on_creator_id"
+    t.index [ "creator_id" ], name: "index_telegram_posts_on_creator_id"
   end
 
+
+  add_foreign_key "comparison_stats", "creators"
   add_foreign_key "github_activities", "creators"
+  add_foreign_key "leaderboards", "creators"
   add_foreign_key "telegram_posts", "creators"
 end
