@@ -5,9 +5,9 @@ class CreatorsController < ApplicationController
     @creator = Creator.find(params[:id])
     GithubFetcherService.call(@creator)
     TelegramFetcherService.call(@creator)
-    render json: { success: true, message: 'Data fetching initiated' }
+    render json: { success: true, message: "Data fetching initiated" }
   rescue ActiveRecord::RecordNotFound
-    render json: { success: false, error: 'Creator not found' }, status: :not_found
+    render json: { success: false, error: "Creator not found" }, status: :not_found
   end
 
   private
