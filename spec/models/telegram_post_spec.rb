@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe TelegramPost, type: :model do
   attributes = [
-    { creator: [:belong_to] },
+    { creator: [ :belong_to ] },
     { message_id: %i[presence] },
     { text: %i[presence] },
     { posted_at: %i[presence] },
