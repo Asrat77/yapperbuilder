@@ -10,6 +10,9 @@ Rails.application.routes.draw do
 
   resources :creators, only: [:index, :show, :create] do
     resources :stats, only: [:index]
+    member do
+      post :fetch_data
+    end
   end
 
   resources :leaderboards, only: [:index]
