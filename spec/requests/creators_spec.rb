@@ -24,5 +24,5 @@ RSpec.describe "Creators", type: :request do
     }
   end
 
-  include_examples("request_shared_spec", "creators", 5, [:update, :destroy])
+  include_examples("request_shared_spec", "creators", 6, [:update, :destroy])
 end
