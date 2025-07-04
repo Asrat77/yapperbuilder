@@ -8,8 +8,8 @@ WORKDIR /rails
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
     build-essential \
-    libpq-dev \
-    postgresql-client \
+    sqlite3 \
+    libsqlite3-dev \
     libyaml-dev && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 

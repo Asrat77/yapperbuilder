@@ -1,37 +1,16 @@
 default: &default
-  adapter: postgresql
-  encoding: unicode
-  # For details on connection pooling, see Rails configuration guide
-  # https://guides.rubyonrails.org/configuring.html#database-pooling
+  adapter: sqlite3
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  host: <%= ENV.fetch("POSTGRES_HOST") { "localhost" } %>
-  username: <%= ENV.fetch("POSTGRES_USER") { "postgres" } %>
-  password: <%= ENV.fetch("POSTGRES_PASSWORD") { "password" } %>
+  timeout: 5000
 
 development:
   <<: *default
-  database: yapperbuilder_development
+  database: db/development.sqlite3
 
 test:
   <<: *default
-  database: yapperbuilder_test
-  username: postgres
+  database: db/test.sqlite3
 
 production:
-  primary: &primary_production
-    <<: *default
-    database: yapperbuilder_production
-    username: yapperbuilder
-    password: <%= ENV["YAPPERBUILDER_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: yapperbuilder_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: yapperbuilder_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: yapperbuilder_production_cable
-    migrations_paths: db/cable_migrate
+  <<: *default
+  database: db/production.sqlite3
