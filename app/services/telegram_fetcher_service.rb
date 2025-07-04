@@ -1,6 +1,6 @@
-require 'net/http'
-require 'uri'
-require 'json'
+require "net/http"
+require "uri"
+require "json"
 
 class TelegramFetcherService
   # Ideally, this base URL would be configured via environment variables or Rails credentials.
