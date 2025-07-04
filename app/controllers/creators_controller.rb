@@ -25,13 +25,36 @@ class CreatorsController < ApplicationController
 
   def fetch_data
     @creator = Creator.find(params[:id])
-    GithubFetcherService.call(@creator)
+
+    github_result = GithubFetcherService.call(@creator)
     telegram_result = TelegramFetcherService.call(@creator)
 
-    if telegram_result[:success]
-      render json: { success: true, message: "Data fetching initiated" }, status: :ok
+    unless github_result[:success]
+      return render json: { success: false, error: github_result[:error] }, status: :unprocessable_entity
+    end
+
+    unless telegram_result[:success]
+      return render json: { success: false, error: telegram_result[:error] }, status: :unprocessable_entity
+    end
+
+    commits_count = github_result[:commits_count]
+    posts_count = telegram_result[:posts_count]
+
+    # Calculate commit_to_post_ratio
+    commit_to_post_ratio = posts_count > 0 ? commits_count.to_f / posts_count : 0.0
+
+    # For simplicity, using 'daily' as timeframe for now. This could be dynamic.
+    timeframe = "daily"
+
+    comparison_stat = ComparisonStat.find_or_initialize_by(creator: @creator, timeframe: timeframe)
+    comparison_stat.commits_count = commits_count
+    comparison_stat.posts_count = posts_count
+    comparison_stat.commit_to_post_ratio = commit_to_post_ratio
+
+    if comparison_stat.save
+      render json: { success: true, message: "Data fetched and comparison stats updated" }, status: :ok
     else
-      render json: { success: false, error: telegram_result[:error] }, status: :unprocessable_entity
+      render json: { success: false, error: comparison_stat.errors.full_messages.join(", ") }, status: :unprocessable_entity
     end
   rescue ActiveRecord::RecordNotFound
     render json: { success: false, error: "Creator not found" }, status: :not_found
