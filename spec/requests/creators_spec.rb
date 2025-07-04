@@ -24,7 +24,7 @@ RSpec.describe "Creators", type: :request do
     }
   end
 
-  include_examples("request_shared_spec", "creators", 6, [:update, :destroy])
+  include_examples("request_shared_spec", "creators", 6, [ :update, :destroy ])
 
   describe "POST /creators/:id/fetch_data" do
     let(:creator) { create(:creator) }

@@ -1,18 +1,18 @@
-require 'net/http'
-require 'uri'
-require 'json'
+require "net/http"
+require "uri"
+require "json"
 
 class GithubFetcherService
   GITHUB_API_BASE_URL = "https://api.github.com"
   # IMPORTANT: Replace 'YOUR_GITHUB_ACCESS_TOKEN' with your actual GitHub Personal Access Token.
   # This should ideally be loaded from Rails credentials or environment variables for security.
-  GITHUB_ACCESS_TOKEN = ENV.fetch('GITHUB_ACCESS_TOKEN', 'YOUR_GITHUB_ACCESS_TOKEN')
+  GITHUB_ACCESS_TOKEN = ENV.fetch("GITHUB_ACCESS_TOKEN", "YOUR_GITHUB_ACCESS_TOKEN")
 
   def self.call(creator)
     github_username = creator.github_username
     total_commits = 0
 
-    unless GITHUB_ACCESS_TOKEN && GITHUB_ACCESS_TOKEN != 'YOUR_GITHUB_ACCESS_TOKEN'
+    unless GITHUB_ACCESS_TOKEN && GITHUB_ACCESS_TOKEN != "YOUR_GITHUB_ACCESS_TOKEN"
       return { success: false, error: "GitHub Access Token is not configured." }
     end
 
@@ -41,7 +41,7 @@ class GithubFetcherService
     response_headers = make_github_api_request(uri, return_headers: true)
 
     # Extract total pages from Link header for pagination
-    link_header = response_headers['link']
+    link_header = response_headers["link"]
     if link_header
       last_page_match = link_header.match(/<[^>]+[?&]page=(\d+)>; rel="last"/)
       total_pages = last_page_match ? last_page_match[1].to_i : 1
@@ -56,15 +56,15 @@ class GithubFetcherService
 
   def self.make_github_api_request(uri, return_headers: false)
     request = Net::HTTP::Get.new(uri)
-    request['Authorization'] = "token #{GITHUB_ACCESS_TOKEN}"
-    request['Accept'] = 'application/vnd.github.v3+json'
+    request["Authorization"] = "token #{GITHUB_ACCESS_TOKEN}"
+    request["Accept"] = "application/vnd.github.v3+json"
 
-    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
+    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
       http.request(request)
     end
 
     unless response.is_a?(Net::HTTPSuccess)
-      error_message = JSON.parse(response.body)['message'] rescue "Unknown GitHub API error"
+      error_message = JSON.parse(response.body)["message"] rescue "Unknown GitHub API error"
       raise "GitHub API Error (Status: #{response.code}): #{error_message}"
     end
 

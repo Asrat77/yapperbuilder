@@ -44,7 +44,7 @@ class CreatorsController < ApplicationController
     commit_to_post_ratio = posts_count > 0 ? commits_count.to_f / posts_count : 0.0
 
     # For simplicity, using 'daily' as timeframe for now. This could be dynamic.
-    timeframe = 'daily'
+    timeframe = "daily"
 
     comparison_stat = ComparisonStat.find_or_initialize_by(creator: @creator, timeframe: timeframe)
     comparison_stat.commits_count = commits_count
@@ -52,12 +52,12 @@ class CreatorsController < ApplicationController
     comparison_stat.commit_to_post_ratio = commit_to_post_ratio
 
     if comparison_stat.save
-      render json: { success: true, message: 'Data fetched and comparison stats updated' }, status: :ok
+      render json: { success: true, message: "Data fetched and comparison stats updated" }, status: :ok
     else
-      render json: { success: false, error: comparison_stat.errors.full_messages.join(', ') }, status: :unprocessable_entity
+      render json: { success: false, error: comparison_stat.errors.full_messages.join(", ") }, status: :unprocessable_entity
     end
   rescue ActiveRecord::RecordNotFound
-    render json: { success: false, error: 'Creator not found' }, status: :not_found
+    render json: { success: false, error: "Creator not found" }, status: :not_found
   end
 
   private
