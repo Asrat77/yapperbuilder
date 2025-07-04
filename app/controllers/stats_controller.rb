@@ -9,6 +9,6 @@ class StatsController < ApplicationController
 
     render json: { success: true, data: ActiveModelSerializers::SerializableResource.new(data) }
   rescue ActiveRecord::RecordNotFound
-    render json: { success: false, error: 'Creator not found' }, status: :not_found
+    render json: { success: false, error: "Creator not found" }, status: :not_found
   end
 end

@@ -8,7 +8,7 @@ class CreatorsController < ApplicationController
     @creator = Creator.find(params[:id])
     render json: { success: true, data: ActiveModelSerializers::SerializableResource.new(@creator) }
   rescue ActiveRecord::RecordNotFound
-    render json: { success: false, error: 'Creator not found' }, status: :not_found
+    render json: { success: false, error: "Creator not found" }, status: :not_found
   end
 
   def create
@@ -26,10 +26,15 @@ class CreatorsController < ApplicationController
   def fetch_data
     @creator = Creator.find(params[:id])
     GithubFetcherService.call(@creator)
-    TelegramFetcherService.call(@creator)
-    render json: { success: true, message: 'Data fetching initiated' }, status: :ok
+    telegram_result = TelegramFetcherService.call(@creator)
+
+    if telegram_result[:success]
+      render json: { success: true, message: "Data fetching initiated" }, status: :ok
+    else
+      render json: { success: false, error: telegram_result[:error] }, status: :unprocessable_entity
+    end
   rescue ActiveRecord::RecordNotFound
-    render json: { success: false, error: 'Creator not found' }, status: :not_found
+    render json: { success: false, error: "Creator not found" }, status: :not_found
   end
 
   private
