@@ -4,7 +4,7 @@ require "json"
 
 class TelegramFetcherService
   # Ideally, this base URL would be configured via environment variables or Rails credentials.
-  TELEGRAM_API_BASE_URL = "https://1c94-196-189-127-39.ngrok-free.app"
+  TELEGRAM_API_BASE_URL = "https://784a-196-188-252-21.ngrok-free.app"
 
   def self.call(creator)
     channel_identifier = creator.telegram_channel
