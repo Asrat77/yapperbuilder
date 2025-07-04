@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     resources :stats, only: [ :index ]
     member do
       post :fetch_data
+      get :comparison_ratio
     end
   end
 

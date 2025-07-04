@@ -60,6 +60,20 @@ class CreatorsController < ApplicationController
     render json: { success: false, error: 'Creator not found' }, status: :not_found
   end
 
+  def comparison_ratio
+    @creator = Creator.find(params[:id])
+    # Assuming 'daily' is the relevant timeframe for the latest ratio
+    comparison_stat = @creator.comparison_stats.find_by(timeframe: 'daily')
+
+    if comparison_stat
+      render json: { success: true, creator_id: @creator.id, commit_to_post_ratio: comparison_stat.commit_to_post_ratio }, status: :ok
+    else
+      render json: { success: false, error: 'Comparison stats not found for this creator and timeframe' }, status: :not_found
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: { success: false, error: 'Creator not found' }, status: :not_found
+  end
+
   private
 
   def creator_params

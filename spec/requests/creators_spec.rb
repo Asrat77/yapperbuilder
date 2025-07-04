@@ -88,4 +88,38 @@ RSpec.describe "Creators", type: :request do
       end
     end
   end
+
+  describe "GET /creators/:id/comparison_ratio" do
+    let(:creator) { create(:creator) }
+
+    context "when creator exists" do
+      it "returns the comparison ratio" do
+        create(:comparison_stat, creator: creator, timeframe: 'daily', commit_to_post_ratio: 1.5)
+        get comparison_ratio_creator_url(creator), as: :json
+        expect(response).to be_successful
+        result = JSON(response.body)
+        expect(result["success"]).to be_truthy
+        expect(result["creator_id"]).to eq creator.id
+        expect(result["commit_to_post_ratio"]).to eq 1.5
+      end
+
+      it "returns not found if comparison stats do not exist" do
+        get comparison_ratio_creator_url(creator), as: :json
+        expect(response).to have_http_status(:not_found)
+        result = JSON(response.body)
+        expect(result["success"]).to be_falsey
+        expect(result["error"]).to eq 'Comparison stats not found for this creator and timeframe'
+      end
+    end
+
+    context "when creator does not exist" do
+      it "returns a not found error" do
+        get comparison_ratio_creator_url(99999), as: :json
+        expect(response).to have_http_status(:not_found)
+        result = JSON(response.body)
+        expect(result["success"]).to be_falsey
+        expect(result["error"]).to eq 'Creator not found'
+      end
+    end
+  end
 end
