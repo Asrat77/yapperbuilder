@@ -21,7 +21,7 @@ RSpec.shared_examples "request_shared_spec" do |controller, field_count, exclude
     describe "GET /show" do
       it "returns a success response" do
         obj = create(factory)
-        get(send("#{controller.singularize}_url", obj), headers: headers, as: :json)
+        get(send("#{controller.singularize}_url", obj), headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }, as: :json)
         expect(response).to be_successful
         result = JSON(response.body)
 
@@ -41,6 +41,7 @@ RSpec.shared_examples "request_shared_spec" do |controller, field_count, exclude
             post(
               send("#{controller}_url"),
               params: params,
+              headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
               as: :json
             )
           end.to change(clazz, :count).by(1)
@@ -58,6 +59,7 @@ RSpec.shared_examples "request_shared_spec" do |controller, field_count, exclude
           post(
             send("#{controller}_url"),
             params: params,
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
             as: :json
           )
           expect(response).to have_http_status(:unprocessable_entity)
@@ -80,7 +82,7 @@ RSpec.shared_examples "request_shared_spec" do |controller, field_count, exclude
 
           put(
             send("#{controller.singularize}_url", obj),
-            params: params, as: :json
+            params: params, headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }, as: :json
           )
           obj.reload
 
@@ -101,6 +103,7 @@ RSpec.shared_examples "request_shared_spec" do |controller, field_count, exclude
           put(
             send("#{controller.singularize}_url", obj),
             params: params,
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
             as: :json
           )
 

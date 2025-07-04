@@ -1,18 +1,40 @@
 class CreatorsController < ApplicationController
-  include Common
+  def index
+    @creators = Creator.all
+    render json: { success: true, data: ActiveModelSerializers::SerializableResource.new(@creators) }
+  end
+
+  def show
+    @creator = Creator.find(params[:id])
+    render json: { success: true, data: ActiveModelSerializers::SerializableResource.new(@creator) }
+  rescue ActiveRecord::RecordNotFound
+    render json: { success: false, error: 'Creator not found' }, status: :not_found
+  end
+
+  def create
+    @creator = Creator.new(creator_params)
+
+    if @creator.save
+      render json: { success: true, data: ActiveModelSerializers::SerializableResource.new(@creator) }, status: :created
+    else
+      render json: { success: false, error: @creator.errors.full_messages[0] }, status: :unprocessable_entity
+    end
+  rescue => e
+    render json: { success: false, error: e.message }
+  end
 
   def fetch_data
     @creator = Creator.find(params[:id])
     GithubFetcherService.call(@creator)
     TelegramFetcherService.call(@creator)
-    render json: { success: true, message: "Data fetching initiated" }
+    render json: { success: true, message: 'Data fetching initiated' }, status: :ok
   rescue ActiveRecord::RecordNotFound
-    render json: { success: false, error: "Creator not found" }, status: :not_found
+    render json: { success: false, error: 'Creator not found' }, status: :not_found
   end
 
   private
 
-  def model_params
+  def creator_params
     params.require(:payload).permit(:github_username, :telegram_channel, :name, :avatar_url, :bio)
   end
 end
